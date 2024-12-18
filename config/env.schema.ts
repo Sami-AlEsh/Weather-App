@@ -9,5 +9,6 @@ export const envValidationSchema = Joi.object({
   THROTTLING_SKIP_ORIGINS: Joi.string().default(''),
 
   OPEN_WEATHER_API_KEY: Joi.string().required(),
-  OPEN_WEATHER_API_URL: Joi.string().required(),
+  OPEN_CITY_WEATHER_API_URL: Joi.string().required(),
+  OPEN_CITY_FORECAST_API_URL: Joi.string().required(),
 });

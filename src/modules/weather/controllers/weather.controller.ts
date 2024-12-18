@@ -3,7 +3,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 
 import { CityWeatherResponse } from '../weather.interfaces';
 import { WeatherService } from '../services/weather.service';
-import { CityWeatherDto } from '../dto/get-city-weather.dto';
+import { CityDto } from '../dto/city.dto';
 
 @Controller('weather')
 export class WeatherController {
@@ -12,7 +12,7 @@ export class WeatherController {
   @Get('/:city')
   @ApiOperation({ summary: 'Retrieve current weather for a given city' })
   async getCityCurrentWeather(
-    @Param() cityWeatherDto: CityWeatherDto,
+    @Param() cityWeatherDto: CityDto,
   ): Promise<CityWeatherResponse> {
     return this.weatherService.getCityCurrentWeather(cityWeatherDto);
   }

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import querystring from 'querystring';
-import { ConfigService } from '@nestjs/config';
 import {
   BadRequestException,
   HttpException,
@@ -8,19 +7,20 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
-import { CityWeatherResponse } from '../weather.interfaces';
 import { CityDto } from '../dto/city.dto';
+import { CityForecastResponse } from '../forecast.interfaces';
 
 @Injectable()
-export class WeatherService {
-  private readonly logger = new Logger(WeatherService.name);
+export class ForecastService {
+  private readonly logger = new Logger(ForecastService.name);
 
   constructor(private readonly configService: ConfigService) {}
 
-  private async fetchCityWeather(city: string): Promise<CityWeatherResponse> {
+  private async fetchCityForecast(city: string): Promise<CityForecastResponse> {
     const baseUrl = this.configService.get<string>(
-      'OPEN_CITY_WEATHER_API_URL',
+      'OPEN_CITY_FORECAST_API_URL',
     )!;
     const queryParams = querystring.stringify({
       q: city,
@@ -29,13 +29,13 @@ export class WeatherService {
 
     try {
       const { data } = await axios.post(`${baseUrl}?${queryParams}`);
-      return data as CityWeatherResponse;
+      return data as CityForecastResponse;
     } catch (error) {
       const statusCode = error.response?.status ?? HttpStatus.BAD_REQUEST;
       const errorMessage = error.response?.data?.message ?? error.message;
 
       this.logger.error(
-        `Failed to fetch the current weather of city ${city}, reason: ${errorMessage}`,
+        `Failed to fetch the forecast of city ${city}, reason: ${errorMessage}`,
       );
 
       if (error.response) {
@@ -46,10 +46,10 @@ export class WeatherService {
     }
   }
 
-  async getCityCurrentWeather(
+  async getCityForecast(
     cityWeatherDto: CityDto,
-  ): Promise<CityWeatherResponse> {
-    const result = await this.fetchCityWeather(cityWeatherDto.city);
+  ): Promise<CityForecastResponse> {
+    const result = await this.fetchCityForecast(cityWeatherDto.city);
     return result;
   }
 }
