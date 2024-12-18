@@ -6,6 +6,26 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { CustomLogger } from './common/helpers/custom.logger';
 
+/**
+ * Print beautiful label in console for Swagger-Documentation url
+ * @param port
+ */
+function printSwaggerDocLabel(port: number, isProd: boolean) {
+  console.log(
+    isProd
+      ? `
+    +-------------------------------------------------------------+
+    |  ❌ Swagger Documentation is disabled in production env ❌  |
+    +-------------------------------------------------------------+
+    `
+      : `
+    +------------------------------------------------------------------------+
+    |  ✅ Swagger Documentation is available on http://localhost:${port}/api ✅ |
+    +------------------------------------------------------------------------+
+    `,
+  );
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new CustomLogger(),
@@ -18,8 +38,9 @@ async function bootstrap() {
   );
 
   const configService = app.get(ConfigService);
+  const isProd = configService.get<string>('NODE_ENV') === 'production';
 
-  if (configService.get<string>('NODE_ENV') !== 'production') {
+  if (!isProd) {
     const config = new DocumentBuilder()
       .setTitle('Weather App')
       .setDescription('The Weather App API description')
@@ -33,8 +54,6 @@ async function bootstrap() {
 
   await app.listen(3000);
 
-  console.log(
-    `\n>> Swagger UI is available at http://localhost:${configService.get<number>('PORT')!}/api\n`,
-  );
+  printSwaggerDocLabel(configService.get<number>('PORT')!, isProd);
 }
 bootstrap();
