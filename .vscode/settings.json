@@ -1,0 +1,17 @@
+{
+  "editor.formatOnSave": true,
+  "eslint.validate": ["typescript"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always"
+  },
+  "files.insertFinalNewline": true,
+  "[yaml]": {
+    "editor.formatOnSave": false,
+    "editor.autoIndent": "advanced",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.formatOnSave": false
+  },
+  "cSpell.words": []
+}
