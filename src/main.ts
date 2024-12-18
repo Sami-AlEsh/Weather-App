@@ -26,7 +26,7 @@ async function bootstrap() {
   await app.listen(3000);
 
   console.log(
-    `\n>> Swagger UI is available at http://localhost:${configService.get<number>('PORT')}/api\n`,
+    `\n>> Swagger UI is available at http://localhost:${configService.get<number>('PORT')!}/api\n`,
   );
 }
 bootstrap();
