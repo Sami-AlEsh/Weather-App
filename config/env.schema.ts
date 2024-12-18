@@ -7,4 +7,7 @@ export const envValidationSchema = Joi.object({
   REQUESTS_TTL: Joi.number().default(60),
   REQUESTS_LIMIT: Joi.number().default(10),
   THROTTLING_SKIP_ORIGINS: Joi.string().default(''),
+
+  OPEN_WEATHER_API_KEY: Joi.string().required(),
+  OPEN_WEATHER_API_URL: Joi.string().required(),
 });

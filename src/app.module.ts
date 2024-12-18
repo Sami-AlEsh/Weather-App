@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { envValidationSchema } from 'config/env.schema';
+import { WeatherModule } from './modules/weather/weather.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { envValidationSchema } from 'config/env.schema';
         },
       ],
     }),
+    WeatherModule,
   ],
   providers: [
     {
