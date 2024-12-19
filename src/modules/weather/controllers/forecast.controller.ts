@@ -1,9 +1,9 @@
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Controller, Get, Param } from '@nestjs/common';
 
-import { ForecastService } from '../services/forecast.service';
 import { CityDto } from '../dto/city.dto';
-import { CityForecastResponse } from '../weather.interfaces';
+import { ForecastService } from '../services/forecast.service';
+import { CityForecastResponseDto } from '../dto/city-forecast-response.dto';
 
 @Controller('forecast')
 export class ForecastController {
@@ -11,8 +11,8 @@ export class ForecastController {
 
   @Get('/:city')
   @ApiOperation({ summary: 'Retrieve a 5-day forecast for a given city' })
-  @ApiResponse({ type: CityForecastResponse })
-  getCityForecast(@Param() cityDto: CityDto): Promise<CityForecastResponse> {
+  @ApiResponse({ type: CityForecastResponseDto })
+  getCityForecast(@Param() cityDto: CityDto): Promise<CityForecastResponseDto> {
     return this.forecastService.getCityForecast(cityDto);
   }
 }

@@ -9,8 +9,8 @@ import {
   Logger,
 } from '@nestjs/common';
 
-import { CityWeatherResponse } from '../weather.interfaces';
 import { CityDto } from '../dto/city.dto';
+import { CityWeatherResponseDto } from '../dto/city-weather-response.dto';
 
 @Injectable()
 export class WeatherService {
@@ -18,7 +18,9 @@ export class WeatherService {
 
   constructor(private readonly configService: ConfigService) {}
 
-  private async fetchCityWeather(city: string): Promise<CityWeatherResponse> {
+  private async fetchCityWeather(
+    city: string,
+  ): Promise<CityWeatherResponseDto> {
     const baseUrl = this.configService.get<string>(
       'OPEN_CITY_WEATHER_API_URL',
     )!;
@@ -29,7 +31,7 @@ export class WeatherService {
 
     try {
       const { data } = await axios.post(`${baseUrl}?${queryParams}`);
-      return data as CityWeatherResponse;
+      return data as CityWeatherResponseDto;
     } catch (error) {
       const statusCode = error.response?.status ?? HttpStatus.BAD_REQUEST;
       const errorMessage = error.response?.data?.message ?? error.message;
@@ -46,7 +48,9 @@ export class WeatherService {
     }
   }
 
-  async getCityCurrentWeather(cityDto: CityDto): Promise<CityWeatherResponse> {
+  async getCityCurrentWeather(
+    cityDto: CityDto,
+  ): Promise<CityWeatherResponseDto> {
     const result = await this.fetchCityWeather(cityDto.city);
     return result;
   }
