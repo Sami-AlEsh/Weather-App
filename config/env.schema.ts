@@ -11,4 +11,10 @@ export const envValidationSchema = Joi.object({
   OPEN_WEATHER_API_KEY: Joi.string().required(),
   OPEN_CITY_WEATHER_API_URL: Joi.string().required(),
   OPEN_CITY_FORECAST_API_URL: Joi.string().required(),
+
+  DB_HOST: Joi.string().required(),
+  DB_PORT: Joi.number().required(),
+  DB_NAME: Joi.string().required(),
+  DB_USERNAME: Joi.string().required(),
+  DB_PASSWORD: Joi.string().required(),
 });
