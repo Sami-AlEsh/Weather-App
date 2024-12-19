@@ -46,10 +46,8 @@ export class WeatherService {
     }
   }
 
-  async getCityCurrentWeather(
-    cityWeatherDto: CityDto,
-  ): Promise<CityWeatherResponse> {
-    const result = await this.fetchCityWeather(cityWeatherDto.city);
+  async getCityCurrentWeather(cityDto: CityDto): Promise<CityWeatherResponse> {
+    const result = await this.fetchCityWeather(cityDto.city);
     return result;
   }
 }

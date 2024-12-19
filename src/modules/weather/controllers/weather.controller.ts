@@ -1,4 +1,4 @@
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Controller, Get, Param } from '@nestjs/common';
 
 import { CityWeatherResponse } from '../weather.interfaces';
@@ -11,9 +11,10 @@ export class WeatherController {
 
   @Get('/:city')
   @ApiOperation({ summary: 'Retrieve current weather for a given city' })
+  @ApiResponse({ type: CityWeatherResponse })
   async getCityCurrentWeather(
-    @Param() cityWeatherDto: CityDto,
+    @Param() cityDto: CityDto,
   ): Promise<CityWeatherResponse> {
-    return this.weatherService.getCityCurrentWeather(cityWeatherDto);
+    return this.weatherService.getCityCurrentWeather(cityDto);
   }
 }

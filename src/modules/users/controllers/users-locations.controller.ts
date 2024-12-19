@@ -25,7 +25,7 @@ export class UsersLocationsController {
   @ApiResponse({ type: Location, isArray: true })
   async findAllFavoriteLocations(
     @Param('userId', ParseIntPipe) userId: number,
-  ) {
+  ): Promise<Location[]> {
     return this.usersLocationsService.getFavoriteLocations(userId);
   }
 
@@ -48,7 +48,7 @@ export class UsersLocationsController {
   async deleteUser(
     @Param('userId', ParseIntPipe) userId: number,
     @Param('locationId', ParseIntPipe) locationId: number,
-  ) {
+  ): Promise<void> {
     await this.usersLocationsService.removeFavoriteLocation(userId, locationId);
   }
 }

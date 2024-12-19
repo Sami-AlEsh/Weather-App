@@ -10,7 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 
 import { CityDto } from '../dto/city.dto';
-import { CityForecastResponse } from '../forecast.interfaces';
+import { CityForecastResponse } from '../weather.interfaces';
 
 @Injectable()
 export class ForecastService {
@@ -46,10 +46,8 @@ export class ForecastService {
     }
   }
 
-  async getCityForecast(
-    cityWeatherDto: CityDto,
-  ): Promise<CityForecastResponse> {
-    const result = await this.fetchCityForecast(cityWeatherDto.city);
+  async getCityForecast(cityDto: CityDto): Promise<CityForecastResponse> {
+    const result = await this.fetchCityForecast(cityDto.city);
     return result;
   }
 }

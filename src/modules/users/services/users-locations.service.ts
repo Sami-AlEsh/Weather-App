@@ -43,7 +43,7 @@ export class UsersLocationsService {
   async addFavoriteLocation(
     userId: number,
     createLocationDto: CreateLocationDto,
-  ) {
+  ): Promise<Location> {
     // Fetch & validate user
     const user = await this.userServices.findUserById(userId);
 
@@ -70,7 +70,7 @@ export class UsersLocationsService {
     return result;
   }
 
-  async getFavoriteLocations(userId: number) {
+  async getFavoriteLocations(userId: number): Promise<Location[]> {
     const user = await this.userServices.findUserById(userId);
     return await this.locationsRepository.findBy({ user: { id: user.id } });
   }

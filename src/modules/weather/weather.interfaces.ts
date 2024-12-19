@@ -1,4 +1,4 @@
-export interface CityWeatherResponse {
+export class CityWeatherResponse {
   coord: any;
   weather: any[];
   base: string;
@@ -12,4 +12,12 @@ export interface CityWeatherResponse {
   id: number;
   name: string;
   cod: number;
+}
+
+export class CityForecastResponse {
+  cod: string;
+  message: number;
+  cnt: number;
+  list: any[];
+  city: any;
 }
