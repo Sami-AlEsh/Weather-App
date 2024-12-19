@@ -5,26 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { CustomLogger } from './common/helpers/custom.logger';
-
-/**
- * Print beautiful label in console for Swagger-Documentation url
- * @param port
- */
-function printSwaggerDocLabel(port: number, isProd: boolean) {
-  console.log(
-    isProd
-      ? `
-    +-------------------------------------------------------------+
-    |  ❌ Swagger Documentation is disabled in production env ❌  |
-    +-------------------------------------------------------------+
-    `
-      : `
-    +------------------------------------------------------------------------+
-    |  ✅ Swagger Documentation is available on http://localhost:${port}/api ✅ |
-    +------------------------------------------------------------------------+
-    `,
-  );
-}
+import { printSwaggerDocLabel } from './common/utils/swagger.utils';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
