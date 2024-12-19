@@ -1,11 +1,13 @@
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseInterceptors } from '@nestjs/common';
 
 import { CityDto } from '../dto/city.dto';
 import { WeatherService } from '../services/weather.service';
 import { CityWeatherResponseDto } from '../dto/city-weather-response.dto';
 
 @Controller('weather')
+@UseInterceptors(CacheInterceptor)
 export class WeatherController {
   constructor(private readonly weatherService: WeatherService) {}
 
