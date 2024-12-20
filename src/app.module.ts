@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 import { envValidationSchema } from 'config/env.schema';
-import { WeatherModule } from './modules/weather/weather.module';
 import { UsersModule } from './modules/users/users.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { WeatherModule } from './modules/weather/weather.module';
+import { AppLoggerMiddleware } from './common/middlewares/app-logger.middleware';
 
 @Module({
   imports: [
@@ -56,4 +57,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+  }
+}
