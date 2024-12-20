@@ -4,7 +4,6 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -57,7 +56,7 @@ export class UsersService {
     const { affected } = await this.userRepository.delete({ id: userId });
 
     if (!affected) {
-      throw new NotFoundException('Unable to delete user, User was not found');
+      throw new BadRequestException('Invalid user id');
     }
 
     this.logger.log(`User with id ${userId} deleted successfully`);
