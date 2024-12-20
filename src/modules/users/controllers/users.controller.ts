@@ -1,36 +1,25 @@
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import {
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, HttpStatus } from '@nestjs/common';
 
 import { User } from '../entities/user.entity';
 import { UsersService } from '../services/users.service';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get(':userId')
-  @ApiOperation({ summary: 'Get a user by ID' })
+  @Get('/me')
+  @ApiOperation({ summary: 'Get current user details' })
   @ApiResponse({ type: User })
-  async getUserById(
-    @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<User> {
-    return this.usersService.findUserById(userId);
+  async getUserById(@GetUser() user: User): Promise<User> {
+    return user;
   }
 
-  @Delete('/:userId')
+  @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a user' })
-  async deleteUser(
-    @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<void> {
-    await this.usersService.remove(userId);
+  @ApiOperation({ summary: 'Delete current user' })
+  async deleteUser(@GetUser() user: User): Promise<void> {
+    await this.usersService.remove(user.id);
   }
 }

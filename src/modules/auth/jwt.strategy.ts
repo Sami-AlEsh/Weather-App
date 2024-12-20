@@ -30,9 +30,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         secret: this.configService.get<string>('JWT_SECRET_KEY'),
       });
 
-      const { email } = payload;
+      const { sub } = payload;
 
-      const user = await this.userService.findOneByEmail(email);
+      const user = await this.userService.findOne({ id: sub });
 
       if (!user) throw new UnauthorizedException();
 

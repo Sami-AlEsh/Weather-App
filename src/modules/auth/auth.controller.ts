@@ -32,9 +32,8 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Login a user' })
   async login(@Body() loginDto: LogInDto, @Res() res: Response) {
-    const user = await this.authService.validateUser(loginDto);
-
-    const { accessToken, refreshToken } = await this.authService.login(user);
+    const { accessToken, refreshToken } =
+      await this.authService.login(loginDto);
 
     res.cookie('access_token', accessToken, {
       httpOnly: true,
@@ -68,7 +67,6 @@ export class AuthController {
     @Cookies('refresh_token') oldRefreshToken: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log('🚀 ~ AuthController ~ oldRefreshToken:', oldRefreshToken);
     if (!oldRefreshToken) {
       res.clearCookie('access_token');
       res.clearCookie('refresh_token');

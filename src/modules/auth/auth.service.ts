@@ -41,6 +41,19 @@ export class AuthService {
     });
   }
 
+  private async validateUser(
+    loginDto: LogInDto,
+  ): Promise<Pick<User, 'id' | 'password'>> {
+    const { email, password } = loginDto;
+    const user = await this.usersService.findOne({ email }, ['id', 'password']);
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+      return user;
+    }
+
+    throw new UnauthorizedException('Invalid credentials!');
+  }
+
   async signUp(signUpDto: SignUpDto): Promise<void> {
     const { firstName, lastName, email, password } = signUpDto;
 
@@ -57,23 +70,12 @@ export class AuthService {
     });
   }
 
-  async validateUser(
-    loginDto: LogInDto,
-  ): Promise<Pick<User, 'email' | 'password'>> {
-    const { email, password } = loginDto;
-    const user = await this.usersService.findOneByEmail(email);
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return user;
-    }
-
-    throw new UnauthorizedException('Invalid credentials!');
-  }
-
   async login(
-    user: Pick<User, 'email' | 'password'>,
+    loginDto: LogInDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const payload: JwtPayload = { email: user.email };
+    const user = await this.validateUser(loginDto);
+
+    const payload: JwtPayload = { sub: user.id };
 
     const [accessToken, refreshToken] = await Promise.all([
       this.generateAccessToken(payload),
@@ -87,12 +89,11 @@ export class AuthService {
     oldRefreshToken: string,
   ): Promise<{ accessToken: string; refreshToken: string | null }> {
     try {
-      const { email, exp } = this.jwtService.verify<JwtPayload>(
-        oldRefreshToken,
-        { secret: this.configService.get<string>('JWT_REFRESH_SECRET_KEY') },
-      );
+      const { sub, exp } = this.jwtService.verify<JwtPayload>(oldRefreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET_KEY'),
+      });
 
-      const user = await this.usersService.findOneByEmail(email);
+      const user = await this.usersService.findOne({ id: sub });
       if (!user) throw new UnauthorizedException();
 
       const remainingMins = this.calculateTokenExpirationInMinutes(exp!);
@@ -103,13 +104,12 @@ export class AuthService {
         )!;
 
       const [accessToken, refreshToken] = await Promise.all([
-        this.generateAccessToken({ email }),
-        rotateRefreshToken ? this.generateRefreshToken({ email }) : null,
+        this.generateAccessToken({ sub }),
+        rotateRefreshToken ? this.generateRefreshToken({ sub }) : null,
       ]);
 
       return { accessToken, refreshToken };
-    } catch (e) {
-      console.log('🚀 ~ AuthService ~ e:', e);
+    } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }

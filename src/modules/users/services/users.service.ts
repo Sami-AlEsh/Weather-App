@@ -5,7 +5,12 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import {
+  FindOptionsSelect,
+  FindOptionsSelectByString,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '../entities/user.entity';
@@ -37,14 +42,17 @@ export class UsersService {
   }
 
   /**
-   * Fetch the user by email (without validation)
+   * Fetch the user by query (without validation)
    * @param email
    * @returns
    */
-  async findOneByEmail(email: string): Promise<User | null> {
+  async findOne(
+    query: FindOptionsWhere<User>,
+    select?: FindOptionsSelect<User> | FindOptionsSelectByString<User>,
+  ): Promise<User | null> {
     return await this.userRepository.findOne({
-      where: { email },
-      select: ['email', 'password'],
+      where: query,
+      select,
     });
   }
 

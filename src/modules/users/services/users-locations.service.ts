@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
 import { Location } from '../entities/location.entity';
 import { CreateLocationDto } from '../dto/create-location.dto';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UsersLocationsService {
@@ -41,15 +42,12 @@ export class UsersLocationsService {
   }
 
   async addFavoriteLocation(
-    userId: number,
+    user: User,
     createLocationDto: CreateLocationDto,
   ): Promise<Location> {
-    // Fetch & validate user
-    const user = await this.userServices.findUserById(userId);
-
     // Check for location duplication
     const isLocationExist = await this.checkLocationExist(
-      userId,
+      user.id,
       createLocationDto,
     );
 
@@ -70,8 +68,7 @@ export class UsersLocationsService {
     return result;
   }
 
-  async getFavoriteLocations(userId: number): Promise<Location[]> {
-    const user = await this.userServices.findUserById(userId);
+  async getFavoriteLocations(user: User): Promise<Location[]> {
     return await this.locationsRepository.findBy({ user: { id: user.id } });
   }
 
@@ -79,11 +76,9 @@ export class UsersLocationsService {
     userId: number,
     locationId: number,
   ): Promise<void> {
-    const user = await this.userServices.findUserById(userId);
-
     const { affected } = await this.locationsRepository.delete({
       id: locationId,
-      user: { id: user.id },
+      user: { id: userId },
     });
 
     if (!affected) {
