@@ -1,6 +1,5 @@
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -8,12 +7,10 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
-  Post,
 } from '@nestjs/common';
 
 import { User } from '../entities/user.entity';
 import { UsersService } from '../services/users.service';
-import { CreateUserDto } from '../dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -26,12 +23,6 @@ export class UsersController {
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<User> {
     return this.usersService.findUserById(userId);
-  }
-
-  @Post()
-  @ApiOperation({ summary: 'Create a new user' })
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<void> {
-    return this.usersService.create(createUserDto);
   }
 
   @Delete('/:userId')

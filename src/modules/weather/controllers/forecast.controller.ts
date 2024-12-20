@@ -4,8 +4,10 @@ import { Controller, Get, Param, UseInterceptors } from '@nestjs/common';
 
 import { CityDto } from '../dto/city.dto';
 import { ForecastService } from '../services/forecast.service';
+import { Public } from 'src/common/decorators/public.decorator';
 import { CityForecastResponseDto } from '../dto/city-forecast-response.dto';
 
+@Public()
 @Controller('forecast')
 @UseInterceptors(CacheInterceptor)
 export class ForecastController {

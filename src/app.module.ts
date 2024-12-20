@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
+import { AuthModule } from './modules/auth/auth.module';
 import { envValidationSchema } from 'config/env.schema';
 import { UsersModule } from './modules/users/users.module';
 import { WeatherModule } from './modules/weather/weather.module';
@@ -49,6 +50,7 @@ import { AppLoggerMiddleware } from './common/middlewares/app-logger.middleware'
     }),
     WeatherModule,
     UsersModule,
+    AuthModule,
   ],
   providers: [
     {

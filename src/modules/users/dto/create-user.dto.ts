@@ -1,24 +1,38 @@
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 
 import { User } from '../entities/user.entity';
 
 export class CreateUserDto implements Omit<User, 'id' | 'locations'> {
   @ApiProperty()
-  @IsNotEmpty()
+  @IsString()
+  @MinLength(4)
+  @MaxLength(20)
   firstName: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsString()
+  @MinLength(4)
+  @MaxLength(20)
   lastName: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsEmail()
+  @MinLength(4)
+  @MaxLength(50)
+  @Transform(({ value }) => value.toLowerCase())
   email: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @Length(8, 20)
+  @MinLength(12)
+  @MaxLength(20)
   password: string;
 }

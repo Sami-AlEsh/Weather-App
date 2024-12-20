@@ -36,6 +36,18 @@ export class UsersService {
     return user;
   }
 
+  /**
+   * Fetch the user by email (without validation)
+   * @param email
+   * @returns
+   */
+  async findOneByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { email },
+      select: ['email', 'password'],
+    });
+  }
+
   async create(createUserDto: CreateUserDto): Promise<void> {
     try {
       const user = this.userRepository.create(createUserDto);
