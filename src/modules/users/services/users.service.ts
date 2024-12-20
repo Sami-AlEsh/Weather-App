@@ -15,7 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { POSTGRES_ERROR_CODES } from 'src/common/enums/postgres-error-codes.enum';
+import { POSTGRES_ERROR_CODES } from '../../../common/enums/postgres-error-codes.enum';
 
 @Injectable()
 export class UsersService {

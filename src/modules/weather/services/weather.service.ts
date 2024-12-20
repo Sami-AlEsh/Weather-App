@@ -36,13 +36,13 @@ export class WeatherService {
       const statusCode = error.response?.status ?? HttpStatus.BAD_REQUEST;
       const errorMessage = error.response?.data?.message ?? error.message;
 
-      this.logger.error(
-        `Failed to fetch the current weather of city ${city}, reason: ${errorMessage}`,
-      );
-
       if (error.response) {
         throw new HttpException(errorMessage, statusCode);
       }
+
+      this.logger.error(
+        `Failed to fetch the current weather of city ${city}, reason: ${errorMessage}`,
+      );
 
       throw new BadRequestException('Something went wrong!');
     }
