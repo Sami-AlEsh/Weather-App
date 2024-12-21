@@ -8,7 +8,7 @@ export class LogInDto implements Pick<User, 'email' | 'password'> {
   @IsString()
   @MinLength(4)
   @MaxLength(50)
-  @Transform(({ value }) => value.toLowerCase())
+  @Transform(({ value }) => value.toLowerCase().trim())
   email: string;
 
   @ApiProperty()

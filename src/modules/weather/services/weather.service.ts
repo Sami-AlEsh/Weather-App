@@ -1,10 +1,12 @@
 import axios from 'axios';
 import querystring from 'querystring';
 import { ConfigService } from '@nestjs/config';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
@@ -14,9 +16,34 @@ import { CityWeatherResponseDto } from '../dto/city-weather-response.dto';
 
 @Injectable()
 export class WeatherService {
+  private readonly WEATHER_CACHE_TTL = 3600000; // 1h
   private readonly logger = new Logger(WeatherService.name);
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
+    private readonly configService: ConfigService,
+  ) {}
+
+  private getCityCacheKey(city: string): string {
+    return `city:weather:${city}`;
+  }
+
+  private async getCachedWeather(
+    city: string,
+  ): Promise<CityWeatherResponseDto | null> {
+    const key = this.getCityCacheKey(city);
+    const cachedData = await this.cacheManager.get<CityWeatherResponseDto>(key);
+    return cachedData || null;
+  }
+
+  private async cacheWeatherData(
+    city: string,
+    result: CityWeatherResponseDto,
+  ): Promise<void> {
+    const key = this.getCityCacheKey(city);
+    await this.cacheManager.set(key, result, this.WEATHER_CACHE_TTL);
+  }
 
   private async fetchCityWeather(
     city: string,
@@ -40,10 +67,6 @@ export class WeatherService {
         throw new HttpException(errorMessage, statusCode);
       }
 
-      this.logger.error(
-        `Failed to fetch the current weather of city ${city}, reason: ${errorMessage}`,
-      );
-
       throw new BadRequestException('Something went wrong!');
     }
   }
@@ -51,7 +74,15 @@ export class WeatherService {
   async getCityCurrentWeather(
     cityDto: CityDto,
   ): Promise<CityWeatherResponseDto> {
-    const result = await this.fetchCityWeather(cityDto.city);
+    const { city } = cityDto;
+
+    // Check if result is cached
+    const cachedResult = await this.getCachedWeather(city);
+    if (cachedResult) return cachedResult;
+
+    // Fetch data and update the cache
+    const result = await this.fetchCityWeather(city);
+    this.cacheWeatherData(city, result);
     return result;
   }
 }

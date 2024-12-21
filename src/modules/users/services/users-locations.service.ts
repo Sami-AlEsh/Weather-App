@@ -89,4 +89,14 @@ export class UsersLocationsService {
       `Location with id ${locationId} deleted successfully for user with id ${userId}`,
     );
   }
+
+  async findAllFavoriteCities(): Promise<string[]> {
+    const locations = await this.locationsRepository
+      .createQueryBuilder('location')
+      .select('location.city', 'city')
+      .groupBy('location.city')
+      .getRawMany<Location>();
+
+    return locations.map((loc) => loc.city);
+  }
 }

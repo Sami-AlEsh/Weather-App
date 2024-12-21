@@ -6,7 +6,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import {
-  FindOptionsSelect,
   FindOptionsSelectByString,
   FindOptionsWhere,
   Repository,
@@ -48,7 +47,7 @@ export class UsersService {
    */
   async findOne(
     query: FindOptionsWhere<User>,
-    select?: FindOptionsSelect<User> | FindOptionsSelectByString<User>,
+    select?: FindOptionsSelectByString<User>,
   ): Promise<User | null> {
     return await this.userRepository.findOne({
       where: query,

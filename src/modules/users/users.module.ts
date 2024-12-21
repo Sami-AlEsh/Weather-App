@@ -12,6 +12,6 @@ import { UsersLocationsService } from './services/users-locations.service';
   imports: [TypeOrmModule.forFeature([User, Location])],
   controllers: [UsersController, UsersLocationsController],
   providers: [UsersService, UsersLocationsService],
-  exports: [UsersService],
+  exports: [UsersService, UsersLocationsService],
 })
 export class UsersModule {}

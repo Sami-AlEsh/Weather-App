@@ -27,7 +27,7 @@ export class CreateUserDto implements Omit<User, 'id' | 'locations'> {
   @IsEmail()
   @MinLength(4)
   @MaxLength(50)
-  @Transform(({ value }) => value.toLowerCase())
+  @Transform(({ value }) => value.toLowerCase().trim())
   email: string;
 
   @ApiProperty()

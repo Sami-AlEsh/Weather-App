@@ -7,6 +7,11 @@ import { WeatherService } from './services/weather.service';
 import { ForecastService } from './services/forecast.service';
 import { WeatherController } from './controllers/weather.controller';
 import { ForecastController } from './controllers/forecast.controller';
+import { BullModule } from '@nestjs/bullmq';
+import { WeatherJobsScheduler } from './weather-jobs.scheduler';
+import { UsersModule } from '../users/users.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { WeatherJobProcessor } from './weather-jobs.processor';
 
 @Module({
   imports: [
@@ -18,12 +23,32 @@ import { ForecastController } from './controllers/forecast.controller';
             host: config.get<string>('REDIS_HOST'),
             port: config.get<number>('REDIS_PORT'),
           },
-          ttl: 3600000, // 1h
+          database: 0,
         }),
       }),
     }),
+    ScheduleModule.forRoot(),
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        connection: {
+          host: config.get<string>('REDIS_HOST'),
+          port: config.get<number>('REDIS_PORT'),
+          db: 1,
+        },
+      }),
+    }),
+    BullModule.registerQueue({
+      name: 'weather',
+    }),
+    UsersModule,
   ],
   controllers: [WeatherController, ForecastController],
-  providers: [WeatherService, ForecastService],
+  providers: [
+    WeatherService,
+    ForecastService,
+    WeatherJobsScheduler,
+    WeatherJobProcessor,
+  ],
 })
 export class WeatherModule {}
