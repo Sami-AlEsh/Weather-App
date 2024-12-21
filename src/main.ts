@@ -36,13 +36,15 @@ async function bootstrap() {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
+        name: 'Authorization',
         description: "Please Provide JWT token without the 'Bearer ' keyword",
+        in: 'header',
       })
+      .addSecurityRequirements('bearer')
       .build();
 
-    SwaggerModule.setup('api', app, () =>
-      SwaggerModule.createDocument(app, config),
-    );
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
   }
 
   await app.listen(3000);
