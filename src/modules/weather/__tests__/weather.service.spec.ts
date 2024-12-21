@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 
 import { CityDto } from '../dto/city.dto';
@@ -12,6 +13,7 @@ jest.mock('axios');
 describe('WeatherService', () => {
   let weatherService: WeatherService;
   let axiosPost: jest.Mock;
+  let cacheManager: Cache;
 
   beforeEach(async () => {
     axiosPost = axios.post as jest.Mock;
@@ -34,66 +36,78 @@ describe('WeatherService', () => {
             }),
           },
         },
+        {
+          provide: CACHE_MANAGER,
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     weatherService = module.get<WeatherService>(WeatherService);
+    cacheManager = module.get<Cache>(CACHE_MANAGER);
   });
 
   describe('getCityCurrentWeather', () => {
-    it('should return the weather data for a given city', async () => {
+    it('should return cached weather data if available', async () => {
       const cityDto: CityDto = { city: 'Dubai' };
       const mockWeatherData: CityWeatherResponseDto = {
-        coord: {
-          lon: 55.3047,
-          lat: 25.2582,
-        },
-        weather: [
-          {
-            id: 800,
-            main: 'Clear',
-            description: 'clear sky',
-            icon: '01n',
-          },
-        ],
+        coord: { lon: 55.3047, lat: 25.2582 },
+        weather: [{ id: 800 }],
         base: 'stations',
-        main: {
-          temp: 296.11,
-          feels_like: 295.66,
-          temp_min: 293.29,
-          temp_max: 296.11,
-          pressure: 1017,
-          humidity: 46,
-          sea_level: 1017,
-          grnd_level: 1016,
-        },
+        main: { temp: 296.11 },
         visibility: 10000,
-        wind: {
-          speed: 2.57,
-          deg: 40,
-        },
-        clouds: {
-          all: 0,
-        },
+        wind: { speed: 2.57, deg: 40 },
+        clouds: { all: 0 },
         dt: 1734709737,
-        sys: {
-          type: 1,
-          id: 7537,
-          country: 'AE',
-          sunrise: 1734663574,
-          sunset: 1734701600,
-        },
+        sys: { type: 1 },
         timezone: 14400,
         id: 292223,
         name: 'Dubai',
         cod: 200,
       };
 
+      (cacheManager.get as jest.Mock).mockResolvedValueOnce(mockWeatherData);
+
+      const result = await weatherService.getCityCurrentWeather(cityDto);
+
+      expect(result).toEqual(mockWeatherData);
+      expect(cacheManager.get).toHaveBeenCalledWith('city:weather:Dubai');
+      expect(axiosPost).not.toHaveBeenCalled();
+    });
+
+    it('should fetch and cache weather data if not cached', async () => {
+      const cityDto: CityDto = { city: 'Dubai' };
+      const mockWeatherData: CityWeatherResponseDto = {
+        coord: { lon: 55.3047, lat: 25.2582 },
+        weather: [{ id: 800 }],
+        base: 'stations',
+        main: { temp: 296.11 },
+        visibility: 10000,
+        wind: { speed: 2.57, deg: 40 },
+        clouds: { all: 0 },
+        dt: 1734709737,
+        sys: { type: 1 },
+        timezone: 14400,
+        id: 292223,
+        name: 'Dubai',
+        cod: 200,
+      };
+
+      (cacheManager.get as jest.Mock).mockResolvedValueOnce(null);
       axiosPost.mockResolvedValueOnce({ data: mockWeatherData });
 
       const result = await weatherService.getCityCurrentWeather(cityDto);
 
       expect(result).toEqual(mockWeatherData);
+      expect(cacheManager.get).toHaveBeenCalledWith('city:weather:Dubai');
+      expect(cacheManager.set).toHaveBeenCalledWith(
+        'city:weather:Dubai',
+        mockWeatherData,
+        3600000,
+      );
       expect(axiosPost).toHaveBeenCalledWith(
         'http://api.weather.com?q=Dubai&appid=fake-key',
       );
@@ -137,45 +151,15 @@ describe('WeatherService', () => {
     it('should call axios and return weather data for a city', async () => {
       const city = 'Dubai';
       const mockWeatherData: CityWeatherResponseDto = {
-        coord: {
-          lon: 55.3047,
-          lat: 25.2582,
-        },
-        weather: [
-          {
-            id: 800,
-            main: 'Clear',
-            description: 'clear sky',
-            icon: '01n',
-          },
-        ],
+        coord: { lon: 55.3047, lat: 25.2582 },
+        weather: [{ id: 800 }],
         base: 'stations',
-        main: {
-          temp: 296.11,
-          feels_like: 295.66,
-          temp_min: 293.29,
-          temp_max: 296.11,
-          pressure: 1017,
-          humidity: 46,
-          sea_level: 1017,
-          grnd_level: 1016,
-        },
+        main: { temp: 296.11 },
         visibility: 10000,
-        wind: {
-          speed: 2.57,
-          deg: 40,
-        },
-        clouds: {
-          all: 0,
-        },
+        wind: { speed: 2.57, deg: 40 },
+        clouds: { all: 0 },
         dt: 1734709737,
-        sys: {
-          type: 1,
-          id: 7537,
-          country: 'AE',
-          sunrise: 1734663574,
-          sunset: 1734701600,
-        },
+        sys: { type: 1 },
         timezone: 14400,
         id: 292223,
         name: 'Dubai',
