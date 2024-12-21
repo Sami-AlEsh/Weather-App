@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 
 import { UserType } from './types/user.type';
 import { User } from '../entities/user.entity';
@@ -22,19 +22,15 @@ export class UsersResolver {
   }
 
   @Query(() => [LocationType])
-  async getFavoriteLocations(
-    @Args('userId', { type: () => Int }) userId: number,
-  ): Promise<Location[]> {
-    const user = await this.usersService.findUserById(userId);
+  async getFavoriteLocations(@GetUser() user: User): Promise<Location[]> {
     return await this.usersLocationsService.getFavoriteLocations(user);
   }
 
   @Mutation(() => LocationType)
   async addFavoriteLocation(
-    @Context() context: any,
+    @GetUser() user: User,
     @Args('createLocationInput') createLocationInput: CreateLocationInput,
   ): Promise<Location> {
-    const user = context.user;
     return await this.usersLocationsService.addFavoriteLocation(
       user,
       createLocationInput,
@@ -43,12 +39,12 @@ export class UsersResolver {
 
   @Mutation(() => Boolean)
   async removeFavoriteLocation(
-    @Args('userId', { type: () => Int }) userId: number,
+    @GetUser() user: User,
     @Args('locationId', { type: () => Int }) locationId: number,
   ): Promise<boolean> {
     try {
       await this.usersLocationsService.removeFavoriteLocation(
-        userId,
+        user.id,
         locationId,
       );
       return true;
