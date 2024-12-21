@@ -16,3 +16,14 @@ services:
     container_name: weather_cache
     ports:
       - 6379:6379
+
+  server:
+    build: .
+    container_name: weather_server
+    env_file:
+      - .env.docker
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+      - redis
