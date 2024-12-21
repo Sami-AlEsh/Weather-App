@@ -5,11 +5,10 @@ import { User } from '../entities/user.entity';
 import { LocationType } from './types/location.type';
 import { Location } from '../entities/location.entity';
 import { UsersService } from '../services/users.service';
-import { Public } from 'src/common/decorators/public.decorator';
-import { UsersLocationsService } from '../services/users-locations.service';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { CreateLocationInput } from './inputs/create-location.input';
+import { UsersLocationsService } from '../services/users-locations.service';
 
-@Public()
 @Resolver(() => User)
 export class UsersResolver {
   constructor(
@@ -18,10 +17,8 @@ export class UsersResolver {
   ) {}
 
   @Query(() => UserType)
-  async getUserById(
-    @Args('userId', { type: () => Int }) userId: number,
-  ): Promise<User> {
-    return await this.usersService.findUserById(userId);
+  async getMyUser(@GetUser() user: User): Promise<User> {
+    return user;
   }
 
   @Query(() => [LocationType])

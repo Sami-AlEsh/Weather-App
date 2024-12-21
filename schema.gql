@@ -41,7 +41,7 @@ scalar JSON
 
 type Query {
   currentCityWeather(city: String!): CityWeatherResponseType!
-  getUserById(userId: Int!): UserType!
+  getMyUser: UserType!
   getFavoriteLocations(userId: Int!): [LocationType!]!
 }
 

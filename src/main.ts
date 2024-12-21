@@ -29,13 +29,11 @@ async function bootstrap() {
       .setTitle('Weather App')
       .setDescription('The Weather App API description')
       .setVersion('1.0')
-      .addCookieAuth('access_token', {
-        type: 'apiKey',
-        description: 'JWT access token stored in the access_token cookie.',
-      })
-      .addCookieAuth('refresh_token', {
-        type: 'apiKey',
-        description: 'JWT refresh token stored in the refresh_token cookie.',
+      .addBearerAuth({
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: "Please Provide JWT token without the 'Bearer ' keyword",
       })
       .build();
 
