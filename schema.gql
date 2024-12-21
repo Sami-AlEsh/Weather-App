@@ -42,12 +42,12 @@ scalar JSON
 type Query {
   currentCityWeather(city: String!): CityWeatherResponseType!
   getMyUser: UserType!
-  getFavoriteLocations(userId: Int!): [LocationType!]!
+  getFavoriteLocations: [LocationType!]!
 }
 
 type Mutation {
   addFavoriteLocation(createLocationInput: CreateLocationInput!): LocationType!
-  removeFavoriteLocation(userId: Int!, locationId: Int!): Boolean!
+  removeFavoriteLocation(locationId: Int!): Boolean!
 }
 
 input CreateLocationInput {
