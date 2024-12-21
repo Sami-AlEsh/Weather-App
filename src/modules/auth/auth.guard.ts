@@ -43,7 +43,6 @@ export class AuthGuard extends PassportAuthGuard('jwt') {
       if (!token) throw new UnauthorizedException();
 
       const user = await this.jwtStrategy.validate(token);
-      console.log('🚀 ~ AuthGuard ~ canActivate ~ user:', user);
       request['user'] = user;
       return true;
     }

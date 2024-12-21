@@ -82,7 +82,8 @@ export class ForecastService {
    * @returns
    */
   async getCityForecast(cityDto: CityDto): Promise<CityForecastResponseDto> {
-    const { city } = cityDto;
+    let { city } = cityDto;
+    city = city.toLowerCase().trim();
 
     // Check if result is cached
     const cachedResult = await this.getCachedForecast(city);

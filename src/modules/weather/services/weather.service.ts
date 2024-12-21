@@ -79,7 +79,8 @@ export class WeatherService {
   async getCityCurrentWeather(
     cityDto: CityDto,
   ): Promise<CityWeatherResponseDto> {
-    const { city } = cityDto;
+    let { city } = cityDto;
+    city = city.toLowerCase().trim();
 
     // Check if result is cached
     const cachedResult = await this.getCachedWeather(city);
