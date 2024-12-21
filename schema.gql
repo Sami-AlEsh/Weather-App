@@ -2,6 +2,22 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type LocationType {
+  id: Int!
+  city: String!
+  country: String!
+  latitude: Float
+  longitude: Float
+}
+
+type UserType {
+  id: Int!
+  firstName: String!
+  lastName: String!
+  email: String!
+  locations: [LocationType!]
+}
+
 type CityWeatherResponseType {
   coord: JSON!
   weather: [JSON!]!
@@ -25,4 +41,18 @@ scalar JSON
 
 type Query {
   currentCityWeather(city: String!): CityWeatherResponseType!
+  getUserById(userId: Int!): UserType!
+  getFavoriteLocations(userId: Int!): [LocationType!]!
+}
+
+type Mutation {
+  addFavoriteLocation(createLocationInput: CreateLocationInput!): LocationType!
+  removeFavoriteLocation(userId: Int!, locationId: Int!): Boolean!
+}
+
+input CreateLocationInput {
+  city: String!
+  country: String!
+  latitude: Float
+  longitude: Float
 }

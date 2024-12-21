@@ -1,17 +1,17 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { InputType, Field, Float } from '@nestjs/graphql';
 import {
-  IsNotEmpty,
   IsString,
+  IsNotEmpty,
   IsLatitude,
   IsLongitude,
   IsOptional,
   Matches,
 } from 'class-validator';
+import { CreateLocationDto } from '../../dto/create-location.dto';
 
-import { Location } from '../entities/location.entity';
-
-export class CreateLocationDto implements Omit<Location, 'id' | 'user'> {
-  @ApiProperty()
+@InputType()
+export class CreateLocationInput implements CreateLocationDto {
+  @Field()
   @IsString()
   @IsNotEmpty()
   @Matches(/^[a-zA-Z][a-zA-Z\s]+[a-zA-Z]$/, {
@@ -20,17 +20,17 @@ export class CreateLocationDto implements Omit<Location, 'id' | 'user'> {
   })
   city: string;
 
-  @ApiProperty()
+  @Field()
   @IsString()
   @IsNotEmpty()
   country: string;
 
-  @ApiPropertyOptional()
+  @Field(() => Float, { nullable: true })
   @IsLatitude()
   @IsOptional()
   latitude?: number;
 
-  @ApiPropertyOptional()
+  @Field(() => Float, { nullable: true })
   @IsLongitude()
   @IsOptional()
   longitude?: number;

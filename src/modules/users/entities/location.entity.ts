@@ -33,7 +33,7 @@ export class Location {
     nullable: true,
     default: null,
   })
-  latitude: number;
+  latitude?: number;
 
   @ApiPropertyOptional({
     description: 'Longitude',
@@ -47,7 +47,7 @@ export class Location {
     nullable: true,
     default: null,
   })
-  longitude: number;
+  longitude?: number;
 
   @ApiHideProperty()
   @ManyToOne(() => User, (user) => user.locations, { onDelete: 'CASCADE' })
