@@ -4,6 +4,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 
 import { WeatherService } from './services/weather.service';
+import { WeatherResolver } from './graphql/weather.resolver';
 import { ForecastService } from './services/forecast.service';
 import { WeatherController } from './controllers/weather.controller';
 import { ForecastController } from './controllers/forecast.controller';
@@ -49,6 +50,7 @@ import { WeatherJobProcessor } from './weather-jobs.processor';
     ForecastService,
     WeatherJobsScheduler,
     WeatherJobProcessor,
+    WeatherResolver,
   ],
 })
 export class WeatherModule {}

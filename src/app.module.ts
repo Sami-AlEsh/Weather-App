@@ -1,6 +1,8 @@
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
@@ -24,6 +26,10 @@ import { AppLoggerMiddleware } from './common/middlewares/app-logger.middleware'
           ttl: config.get<number>('REQUESTS_TTL')! * 1000,
           limit: config.get<number>('REQUESTS_LIMIT')!,
           skipIf: (ctx) => {
+            if (ctx.getType<string>() === 'graphql') {
+              return true;
+            }
+
             const headers = ctx.switchToHttp().getRequest().headers;
             const origin = headers.origin || headers.referer;
             const originsToSkip = config
@@ -47,6 +53,11 @@ import { AppLoggerMiddleware } from './common/middlewares/app-logger.middleware'
         // TODO: Set it to false and add migration files
         synchronize: true,
       }),
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: 'schema.gql',
+      playground: true,
     }),
     WeatherModule,
     UsersModule,

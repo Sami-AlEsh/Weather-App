@@ -12,8 +12,8 @@ export class WeatherJobsScheduler {
     @InjectQueue('weather') private readonly weatherQueue: Queue,
   ) {}
 
-  // @Cron(CronExpression.EVERY_HOUR)
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_HOUR)
+  // @Cron(CronExpression.EVERY_5_SECONDS)
   async refreshWeatherData(): Promise<void> {
     const cities = await this.usersLocationService.findAllFavoriteCities();
     await this.weatherQueue.add('updateWeatherData', cities);
