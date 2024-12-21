@@ -43,7 +43,213 @@ This is a NestJS-based application that serves as a wrapper for a third-party we
 
 ## API Documentation
 
-The API documentation for this project is automatically generated using Swagger. Once the application is running, you can access the interactive API docs by navigating to `http://localhost:3000/api`
+The API documentation for this project is automatically generated using Swagger. Once the application is running, you can access the interactive API docs by navigating to `http://localhost:3000/api`.
+
+## Endpoints
+
+### Get current weather for a given city
+
+**GET** `/weather/{city}`
+
+Retrieve current weather for a given city.
+
+#### Parameters
+
+- `city` (string, required): The city for which to retrieve weather information.
+
+#### Response
+
+Returns the current weather data in the following format:
+
+```json
+{
+  "coord": { ... },
+  "weather": [ ... ],
+  "base": "string",
+  "main": { ... },
+  "visibility": 12345,
+  "wind": { ... },
+  "clouds": { ... },
+  "dt": 1234567890,
+  "sys": { ... },
+  "timezone": 3600,
+  "id": 123456,
+  "name": "London",
+  "cod": 200
+}
+```
+
+### Get 5-day weather forecast for a city
+
+**GET** `/forecast/{city}`
+
+Retrieve a 5-day weather forecast for a given city.
+
+#### Parameters
+
+- `city` (string, required): The city for which to retrieve weather forecast.
+
+#### Response
+
+Returns the weather forecast in the following format:
+
+```json
+{
+  "cod": "200",
+  "message": 0,
+  "cnt": 5,
+  "list": [ ... ],
+  "city": { ... }
+}
+```
+
+### Get current user details
+
+**GET** `/users/me`
+
+Retrieve the details of the currently authenticated user.
+
+#### Response
+
+```json
+{
+  "id": 1,
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com"
+}
+```
+
+### Delete current user
+
+**DELETE** `/users`
+
+Deletes the currently authenticated user.
+
+#### Response
+
+No content is returned (HTTP status 204).
+
+---
+
+### Retrieve the user's favorite locations
+
+**GET** `/users/locations`
+
+Get a list of the user's favorite locations.
+
+#### Response
+
+```json
+[
+  {
+    "id": 1,
+    "city": "London",
+    "country": "UK",
+    "latitude": 51.5074,
+    "longitude": -0.1278
+  }
+]
+```
+
+### Add a favorite location for the user
+
+**POST** `/users/locations`
+
+Adds a new favorite location for the user.
+
+#### Request Body
+
+```json
+{
+  "city": "London",
+  "country": "UK",
+  "latitude": 51.5074,
+  "longitude": -0.1278
+}
+```
+
+#### Response
+
+```
+{
+  "id": 2,
+  "city": "London",
+  "country": "UK",
+  "latitude": 51.5074,
+  "longitude": -0.1278
+}
+```
+
+### Delete a user favorite location
+
+**DELETE** `/users/locations/{locationId}`
+
+Deletes a user's favorite location.
+
+#### Parameters
+
+- `locationId` (number, required): The ID of the location to be deleted.
+
+#### Response
+
+No content is returned (HTTP status 204).
+
+---
+
+### Sign up a new user
+
+**POST** `/auth/signup`
+
+Sign up a new user.
+
+#### Request Body
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+
+### Login a user
+
+**POST** `/auth/login`
+
+Login a user with email and password.
+
+#### Request Body
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+
+### Response
+
+```
+{
+  "access_token": "jwt_token_here"
+}
+```
+
+### Refresh access token
+
+**POST** `/auth/refresh`
+
+Refresh access token and rotate the refresh token.
+
+#### Response
+
+```json
+{
+  "access_token": "new_jwt_token_here"
+}
+```
 
 ---
 
