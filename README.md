@@ -47,9 +47,24 @@ The API documentation for this project is automatically generated using Swagger.
 
 ---
 
-## Caching Strategy
+## Explanation of Caching Strategy
 
-The application uses Redis as an in-memory caching solution, providing fast and reliable storage of weather data ( cities weather & forecasts ). Redis is ideal for distributed systems and scalability as centrilzed cache store, making it well-suited for handling increased load as more servers are added in the future. Cached data is periodically refreshed based on a configurable Time-to-Live (TTL) to maintain freshness (deafault is 1h).
+I designed the caching strategy to improve performance, reduce external API calls, and ensure scalability. Here’s how I approached it:
+
+ 1. **Redis for In-Memory Caching**:
+I implemented Redis for fast, reliable in-memory caching of weather data. This reduces the need for repeated API calls to the external weather service, improving overall efficiency.
+
+ 2. **Centralized Caching**:
+I implemented caching at the service level to ensure that any other service utilizing this service will automatically cache the response. This is to ensure that city data is efficiently cached and reused across the application. This approach guarantees consistent caching for both API responses and data fetched from users' favorite locations.
+
+ 3. **Efficient Data Caching**:
+Weather data is cached for a configurable period (TTL). This setup ensures the data remains fresh while minimizing unnecessary requests to the external API.
+
+ 4. **Separation of Concerns & Scalability**:
+I used Redis in combination with Bull queue to manage background jobs for weather updates. This separation ensures scalability, allowing the system to handle large numbers of locations efficiently without overloading the API or Redis.
+
+ 5. **Optimized Cache Hits**:
+Cached data is reused whenever possible, allowing for faster responses. This not only boosts performance for API calls but also improves the user experience with favorite locations.
 
 ---
 
