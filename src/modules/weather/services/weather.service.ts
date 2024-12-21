@@ -25,7 +25,7 @@ export class WeatherService {
     private readonly configService: ConfigService,
   ) {}
 
-  private getCityCacheKey(city: string): string {
+  getCityCacheKey(city: string): string {
     return `city:weather:${city}`;
   }
 
@@ -71,6 +71,11 @@ export class WeatherService {
     }
   }
 
+  /**
+   * Get the weather of a city, and cache the result for next time
+   * @param cityDto
+   * @returns
+   */
   async getCityCurrentWeather(
     cityDto: CityDto,
   ): Promise<CityWeatherResponseDto> {
